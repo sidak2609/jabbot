@@ -41,6 +41,24 @@ HOURS_OLD = 24
 RESULTS_PER_SEARCH = 15
 MIN_ATS_SCORE = 60
 
+# Hard cap on Gemini calls per run. Free tier on 2.0-flash is 1500/day, but
+# we cap aggressively so a bug can never cost real money.
+MAX_GEMINI_CALLS = 60
+_gemini_call_count = 0
+
+
+def safe_str(value, max_len: int | None = None) -> str:
+    """Convert any field (incl. NaN floats from pandas) to a clean string."""
+    if value is None:
+        return ""
+    # pandas NaN: float that isn't equal to itself
+    if isinstance(value, float) and value != value:
+        return ""
+    s = str(value).strip()
+    if max_len:
+        s = s[:max_len]
+    return s
+
 GEMINI_MODEL = "gemini-2.0-flash"
 GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
 GMAIL_USER = os.environ["GMAIL_USER"]
@@ -75,8 +93,8 @@ def scrape_all() -> list[dict]:
     seen = set()
     unique = []
     for j in all_jobs:
-        key = (str(j.get("company", "")).lower().strip(),
-               str(j.get("title", "")).lower().strip())
+        key = (safe_str(j.get("company")).lower(),
+               safe_str(j.get("title")).lower())
         if key in seen or not key[0]:
             continue
         seen.add(key)
@@ -87,23 +105,35 @@ def scrape_all() -> list[dict]:
 
 # ---------- 2 + 3. Score & rewrite (single Gemini call per job) ----------
 def tailor(profile: dict, job: dict, prompt_template: str) -> dict | None:
-    description = (job.get("description") or "")[:4000]
+    global _gemini_call_count
+    if _gemini_call_count >= MAX_GEMINI_CALLS:
+        print(f"[tailor] hit MAX_GEMINI_CALLS={MAX_GEMINI_CALLS}, stopping")
+        return None
+
+    description = safe_str(job.get("description"), max_len=4000)
     user_msg = (
         f"# PROFILE\n```json\n{json.dumps(profile, indent=2)}\n```\n\n"
         f"# JOB\n"
-        f"Title: {job.get('title')}\n"
-        f"Company: {job.get('company')}\n"
-        f"Location: {job.get('location')}\n"
+        f"Title: {safe_str(job.get('title'))}\n"
+        f"Company: {safe_str(job.get('company'))}\n"
+        f"Location: {safe_str(job.get('location'))}\n"
         f"Description:\n{description}"
     )
     try:
+        _gemini_call_count += 1
         resp = model.generate_content(
             [prompt_template, user_msg],
             generation_config={"response_mime_type": "application/json", "temperature": 0.3},
         )
         return json.loads(resp.text)
     except Exception as e:
-        print(f"[tailor] failed for {job.get('company')}: {e}")
+        msg = str(e)
+        # If we hit a hard quota error, abort the whole run — no point in burning more calls.
+        if "429" in msg or "RESOURCE_EXHAUSTED" in msg or "quota" in msg.lower():
+            print(f"[tailor] quota error, aborting remaining jobs: {msg[:200]}")
+            _gemini_call_count = MAX_GEMINI_CALLS  # hard stop
+        else:
+            print(f"[tailor] failed for {safe_str(job.get('company'))}: {msg[:200]}")
         return None
 
 
@@ -282,10 +312,10 @@ def main():
         if not tailored:
             continue
         if not tailored.get("should_apply") or tailored.get("ats_match_score", 0) < MIN_ATS_SCORE:
-            print(f"[skip] {j.get('company')} — score {tailored.get('ats_match_score')}")
+            print(f"[skip] {safe_str(j.get('company'))} — score {tailored.get('ats_match_score')}")
             continue
 
-        safe_company = re.sub(r"\W+", "_", str(j.get("company", "co")))[:40]
+        safe_company = re.sub(r"\W+", "_", safe_str(j.get("company")) or "co")[:40]
         pdf_path = OUTPUT_DIR / f"sidak_{safe_company}_{int(time.time())}.pdf"
         tex = render_latex(profile, tailored)
         if not compile_pdf(tex, pdf_path):
@@ -299,13 +329,13 @@ def main():
 
         digest_rows.append({
             "score": tailored["ats_match_score"],
-            "company": j.get("company", ""),
-            "title": j.get("title", ""),
-            "location": j.get("location", ""),
-            "job_url": j.get("job_url", ""),
+            "company": safe_str(j.get("company")),
+            "title": safe_str(j.get("title")),
+            "location": safe_str(j.get("location")),
+            "job_url": safe_str(j.get("job_url")),
             "pdf_url": pdf_url,
         })
-        time.sleep(1)  # respect Gemini RPM
+        time.sleep(2)  # respect Gemini free-tier RPM (15 RPM = 1 every 4s, we go faster but safer than 1s)
 
     digest_rows.sort(key=lambda r: r["score"], reverse=True)
     send_digest(digest_rows)
