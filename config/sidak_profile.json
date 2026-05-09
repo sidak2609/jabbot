@@ -1,0 +1,171 @@
+{
+  "personal": {
+    "name": "Sidak Khotra",
+    "phone": "+91-9876441482",
+    "email": "sidakkhotra26@gmail.com",
+    "linkedin": "LINKEDIN_URL_HERE",
+    "github": "GITHUB_URL_HERE",
+    "leetcode": "LEETCODE_URL_HERE",
+    "location": "Gurugram, India"
+  },
+  "summary_facts": {
+    "yoe": "1.5 years",
+    "current_role": "Associate Software Engineer (Data Analyst track) at Accenture",
+    "current_client": "Google — Google Play Partnerships, Play Policy team",
+    "background": "Computer Engineering (Thapar Institute), prior full-stack development experience"
+  },
+  "experience": [
+    {
+      "company": "Accenture",
+      "client": "Google (Google Play Partnerships)",
+      "title": "Associate Software Engineer – Data Analyst",
+      "location": "Gurugram, India",
+      "start": "January 2025",
+      "end": "Present",
+      "verified_bullets": [
+        {
+          "id": "acc-1",
+          "core_action": "Designed and maintained Power BI dashboards tracking operational KPIs for Google's Play Policy team",
+          "tools_used": ["Power BI", "DAX", "Power Query"],
+          "domain_context": "Google Play Policy operations",
+          "metric": null
+        },
+        {
+          "id": "acc-2",
+          "core_action": "Engineered SQL queries to analyse issue trends and support reporting needs, enabling operations teams to make data-driven decisions",
+          "tools_used": ["SQL"],
+          "domain_context": "Operations reporting and trend analysis",
+          "metric": null
+        },
+        {
+          "id": "acc-3",
+          "core_action": "Implemented automation scripts and collaborated with cross-functional stakeholders to translate requirements into analytical outputs",
+          "tools_used": ["Python"],
+          "domain_context": "Stakeholder communication, requirements translation",
+          "metric": null
+        }
+      ]
+    },
+    {
+      "company": "Drish Infotech Ltd.",
+      "title": "Full Stack Developer Intern",
+      "location": "Mohali, India",
+      "start": "January 2024",
+      "end": "June 2024",
+      "verified_bullets": [
+        {
+          "id": "drish-1",
+          "core_action": "Engineered an e-commerce platform with optimised backend workflows",
+          "tools_used": [".NET Core", "Angular"],
+          "metric": "improved checkout efficiency by 20%"
+        },
+        {
+          "id": "drish-2",
+          "core_action": "Implemented Stripe payment gateway with real-time validation, error handling, and audit logging",
+          "tools_used": ["Stripe API"],
+          "metric": "supported 500+ secure transactions"
+        },
+        {
+          "id": "drish-3",
+          "core_action": "Optimised frontend components using lazy loading and component-level performance enhancements",
+          "tools_used": ["Angular"],
+          "metric": "reduced page load time by 35%"
+        }
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "E-Commerce Sales Dashboard",
+      "tools": ["Power BI", "SQL", "Excel", "DAX", "Power Query"],
+      "start": "Oct 2024",
+      "end": "Dec 2024",
+      "verified_bullets": [
+        {
+          "id": "ecom-1",
+          "core_action": "Designed a Power BI dashboard tracking sales revenue and product KPIs across multiple regions",
+          "tools_used": ["Power BI", "DAX", "Power Query"]
+        },
+        {
+          "id": "ecom-2",
+          "core_action": "Investigated sales trends using SQL and identified a noticeable revenue drop in the Electronics category, summarised in Excel reports",
+          "tools_used": ["SQL", "Excel"]
+        }
+      ]
+    },
+    {
+      "name": "HR Attrition Analysis",
+      "tools": ["Power BI", "Python", "Pandas"],
+      "start": "Jul 2024",
+      "end": "Sep 2024",
+      "verified_bullets": [
+        {
+          "id": "hr-1",
+          "core_action": "Examined 1,470 employee records to identify attrition patterns across departments, tenure, and salary bands",
+          "tools_used": ["Python", "Pandas"]
+        },
+        {
+          "id": "hr-2",
+          "core_action": "Designed a Power BI dashboard highlighting high-attrition segments; finding: employees with under 2 years tenure had noticeably higher attrition",
+          "tools_used": ["Power BI"]
+        }
+      ]
+    },
+    {
+      "name": "Netflix Churn Analysis",
+      "tools": ["SQL", "Tableau"],
+      "start": "Mar 2023",
+      "end": "May 2023",
+      "verified_bullets": [
+        {
+          "id": "nflx-1",
+          "core_action": "Queried a Netflix user dataset using SQL to compare churn rates across subscription plans",
+          "tools_used": ["SQL"]
+        },
+        {
+          "id": "nflx-2",
+          "core_action": "Identified higher churn among Basic plan users; created a Tableau dashboard and proposed targeted improvements to reduce churn",
+          "tools_used": ["Tableau"]
+        }
+      ]
+    }
+  ],
+  "skills": {
+    "data_analysis": ["SQL (Joins, CTEs, Window Functions)", "Python (Pandas, NumPy)", "Statistical Analysis", "EDA", "Data Cleaning"],
+    "bi_reporting": ["Power BI (DAX, Power Query)", "Tableau", "Advanced Excel (Pivot Tables, VLOOKUP)", "KPI Dashboards"],
+    "tools": ["PostgreSQL", "GCP (BigQuery)", "Git", "JIRA", "Agile", "REST APIs", ".NET Core", "Angular"]
+  },
+  "education": {
+    "institute": "Thapar Institute of Engineering and Technology",
+    "degree": "BE Computer Engineering",
+    "cgpa": "7.86",
+    "location": "Patiala, Punjab",
+    "start": "August 2020",
+    "end": "July 2024"
+  },
+  "certifications": [
+    "Google Cloud Professional ML Engineer (Credly)",
+    "Generative AI Leader",
+    "Reinvention with Agentic AI – Accenture",
+    "McKinsey Forward Programme",
+    "Data Science Specialization (Johns Hopkins, Coursera)",
+    "300+ DSA problems solved"
+  ],
+  "rewrite_constraints": {
+    "MUST_NOT_INVENT": [
+      "Metrics or numbers not present in verified_bullets",
+      "Tools not listed in skills or verified_bullets.tools_used",
+      "Domains, clients, or projects not present in this file",
+      "Job titles, dates, or company names not present in this file",
+      "Team sizes, scale claims (e.g. 'billion rows', 'PB-scale')",
+      "Ownership claims (e.g. 'led', 'owned end-to-end') unless present in verified_bullets"
+    ],
+    "ALLOWED": [
+      "Reordering bullets to put JD-relevant ones first",
+      "Rephrasing core_action using stronger action verbs",
+      "Substituting synonyms that map to the same fact (e.g. 'built' for 'engineered')",
+      "Surfacing tools from skills section into the summary if JD asks for them AND Sidak has them",
+      "Tightening wording to fit one line"
+    ]
+  }
+}
