@@ -59,7 +59,7 @@ def safe_str(value, max_len: int | None = None) -> str:
         s = s[:max_len]
     return s
 
-GEMINI_MODEL = "gemini-2.0-flash"
+GEMINI_MODEL = "gemini-2.5-flash"
 GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
 GMAIL_USER = os.environ["GMAIL_USER"]
 GMAIL_APP_PASSWORD = os.environ["GMAIL_APP_PASSWORD"]
