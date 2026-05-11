@@ -93,3 +93,16 @@ Set `false` if:
 - JD is for a fundamentally different role (e.g. ML researcher, Senior Manager)
 
 Otherwise `true`.
+
+# OUTPUT FORMATTING RULES (CRITICAL)
+
+All string values in your JSON output must be **plain text**. NO markdown, NO LaTeX, NO formatting commands.
+
+- ❌ Do NOT write `\textbf{Power BI}` or `**Power BI**`
+- ✅ Just write `Power BI`
+- ❌ Do NOT use backslashes for anything: no `\n`, no `\&`, no escape sequences
+- ✅ Write a literal ampersand as `and`
+- ❌ Do NOT use curly braces `{` or `}` anywhere in string values
+- ✅ Use parentheses `(` `)` instead if grouping is needed
+
+The downstream system applies its own formatting. Your job is only the content.
