@@ -39,7 +39,7 @@ LOCATIONS = ["Bangalore, India", "Hyderabad, India", "Gurgaon, India",
              "Mumbai, India", "Pune, India", "Remote, India"]
 HOURS_OLD = 24
 RESULTS_PER_SEARCH = 15
-MIN_ATS_SCORE = 60
+MIN_ATS_SCORE = 50
 
 # Hard cap on Gemini calls per run. Free tier on 2.0-flash is 1500/day, but
 # we cap aggressively so a bug can never cost real money.
@@ -139,20 +139,7 @@ def tailor(profile: dict, job: dict, prompt_template: str) -> dict | None:
 
 # ---------- 4. Render LaTeX & compile PDF ----------
 def render_latex(profile: dict, tailored: dict) -> str:
-    env = jinja2.Environment(
-        block_start_string="((*", block_end_string="*))",
-        variable_start_string="((*", variable_end_string="*))",
-        comment_start_string="((#", comment_end_string="#))",
-        autoescape=False, trim_blocks=True, lstrip_blocks=True,
-    )
-    # Single delimiter style — switch to standard Jinja for clarity
-    env = jinja2.Environment(
-        variable_start_string="((*", variable_end_string="*))",
-        block_start_string="((%", block_end_string="%))",
-        autoescape=False, trim_blocks=True, lstrip_blocks=True,
-    )
-    # Re-read template with the right delim — simpler: use plain Jinja {{ }} but escape in TeX
-    # We'll use a string.Template-style fill below to keep it bulletproof:
+    # Plain string-replace approach — bulletproof, no Jinja delimiter quirks
     tex = TEMPLATE_PATH.read_text()
 
     p = profile["personal"]
