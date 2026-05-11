@@ -212,15 +212,19 @@ def render_latex(profile: dict, tailored: dict) -> str:
 
 
 def latex_escape(s: str) -> str:
-    """Escape LaTeX special chars."""
+    """Escape LaTeX special chars. Order matters: backslash MUST be first
+    because subsequent replacements introduce backslashes."""
     if not isinstance(s, str):
         s = str(s)
-    repl = {
-        "&": r"\&", "%": r"\%", "$": r"\$", "#": r"\#",
-        "_": r"\_", "{": r"\{", "}": r"\}",
-        "~": r"\textasciitilde{}", "^": r"\textasciicircum{}",
-    }
-    for k, v in repl.items():
+    # Backslash first — anything else introduces \, which we don't want re-escaped
+    s = s.replace("\\", r"\textbackslash{}")
+    # Then the rest, in any order
+    repl = [
+        ("&", r"\&"), ("%", r"\%"), ("$", r"\$"), ("#", r"\#"),
+        ("_", r"\_"), ("{", r"\{"), ("}", r"\}"),
+        ("~", r"\textasciitilde{}"), ("^", r"\textasciicircum{}"),
+    ]
+    for k, v in repl:
         s = s.replace(k, v)
     return s
 
@@ -236,7 +240,20 @@ def compile_pdf(tex_source: str, out_path: Path) -> bool:
         )
         return out_path.exists()
     except subprocess.CalledProcessError as e:
-        print(f"[tectonic] {e.stderr.decode()[:500]}")
+        stderr = e.stderr.decode()[:500]
+        print(f"[tectonic] {stderr}")
+        # Extract line number from stderr like "file.tex:62: Undefined..."
+        import re as _re
+        m = _re.search(r":(\d+):", stderr)
+        if m:
+            bad_line = int(m.group(1))
+            lines = tex_source.splitlines()
+            lo = max(0, bad_line - 3)
+            hi = min(len(lines), bad_line + 2)
+            print(f"[tectonic] context around line {bad_line}:")
+            for i in range(lo, hi):
+                marker = ">>>" if i + 1 == bad_line else "   "
+                print(f"[tectonic] {marker} {i+1}: {lines[i][:200]}")
         return False
 
 
